@@ -4,9 +4,14 @@ class UserLoginService{
         this.userRepository = userRepository
     }
     execute = async ({email, password}) => {
-        const emailExists = await this.userRepository.findByEmail(email)
+        const user = await this.userRepository.findByEmail(email)
 
-        if(!emailExists) throw new AppError('E-mail ou senha inválidos')
+        if(!user) throw new AppError('E-mail ou senha inválidos')
+        
+        const validPassword = await this.userRepository.checkPassword({user, password})
+
+
+
     }
 }
 
