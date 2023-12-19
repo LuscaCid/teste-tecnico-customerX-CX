@@ -9,9 +9,8 @@ class SessionsControllers{
 
         const userLoginService = new UserLoginService(userRepository)
         
-        userLoginService.execute({email, password})
-
-
+        const {user, token} = await userLoginService.execute({email, password})
+        return response.status(200).json()
     }
     register = async (request, response) => {
 

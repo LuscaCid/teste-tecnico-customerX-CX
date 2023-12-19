@@ -1,5 +1,7 @@
 const knex = require('../database/knex')
 const {compare, hash} = require('bcryptjs')
+const {sign} = require('jsonwebtoken')
+const AuthConfig = require('../configs/AuthConfig')
 
 class UserRepository{//tratativa do banco de dados
 
@@ -15,6 +17,17 @@ class UserRepository{//tratativa do banco de dados
         const checkIsValid = await compare(user.password, password)
 
         return checkIsValid   
+    }
+
+    signIn = async (user) => {
+
+        const {secret, expiresIn} = AuthConfig.jwt
+
+        const token = sign({}, secret, {
+            subject : String(user.id),
+            expiresIn
+        })
+        return token
     }
     
 }
