@@ -9,11 +9,18 @@ class UserRepository{//tratativa do banco de dados
         const response = await knex('users')
         .where({email})
         .first()
+        .then((data)=> {
+            console.log('succcess at query')
+            return data
+        })
+        .catch(e => console.error(e))
 
         return response //if undefined, wrong email, else, returns the user
     }
 
     checkPassword = async ({user , password}) => {//sending the user and the password that he put in form
+        //user its a object that contains all user info like the password
+        
         const checkIsValid = await compare(user.password, password)
 
         return checkIsValid   
@@ -29,6 +36,23 @@ class UserRepository{//tratativa do banco de dados
         })
         return token
     }
+
+    signUp = async ({username, password, email}) => {
+        await knex('users')
+        .insert({
+            username,
+            email,
+            password
+        })
+        .then((id) =>{
+            console.log('inserted with success')
+            return response.status(200).json(id)  
+        })
+        .catch(e => {
+            console.error(e)
+        })
+    }
+
     
 }
 
