@@ -9,8 +9,6 @@ const app = express()
 app.use(cors())
 const PORT =  process.env.PORT || 3333 
 
-
-
 app.use((error, request, response, next) => {
     if(error instanceof AppError){
         return response.status(error.status).json({
