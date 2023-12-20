@@ -13,15 +13,17 @@ class UserRepository{//tratativa do banco de dados
             console.log('succcess at query')
             return data
         })
-        .catch(e => console.error(e))
+        .catch((e) => console.error(e))
 
         return response //if undefined, wrong email, else, returns the user
     }
 
     checkPassword = async ({user , password}) => {//sending the user and the password that he put in form
         //user its a object that contains all user info like the password
-        
-        const checkIsValid = await compare(user.password, password)
+        console.log(user)
+        const checkIsValid = await compare(password, user.password)
+        //first the password who became from frontend and at least, the password in db thats is a giant hash
+        console.log(checkIsValid)
 
         return checkIsValid   
     }
@@ -46,7 +48,7 @@ class UserRepository{//tratativa do banco de dados
         })
         .then((id) =>{
             console.log('inserted with success')
-            return response.status(200).json(id)  
+            return id 
         })
         .catch(e => {
             console.error(e)

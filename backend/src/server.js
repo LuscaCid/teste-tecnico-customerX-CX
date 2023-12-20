@@ -13,8 +13,6 @@ app.use(express.json())
 app.get('/', (request, response) => response.status(200).json({message : "first route"}))
 const PORT =  process.env.PORT || 3333 
 
-
-
 app.use((error, request, response, next) => {
     if(error instanceof AppError){
         return response.status(error.status).json({
