@@ -47,7 +47,6 @@ class ClientsControllers{
         const {
             newName, 
             addictedEmails,// array of emails that will be insert to this client
-            addictedContacts,// array of contacts that will be insert to this client
             arrayOfDeletedContacts, 
             arrayOfDeletedEmails
         } = request.body
@@ -74,21 +73,6 @@ class ClientsControllers{
             })
         }
 
-        let contactsInsert = null
-        if(addictedContacts.length > 0){
-            contactsInsert = addictedContacts.map(contact => {
-                return {
-                    full_name : contact.full_name,
-                    owner_client_id : client_id
-                }
-            })
-        }
-
-        await knex('contacts')
-        .insert(contactsInsert)
-        .then(() => console.log('inserted with success'))
-        .catch(e => console.error(e))
-
         let emailsInsert = null
         if(addictedEmails.length > 0){
             emailsInsert = addictedEmails.map(email => {
@@ -98,6 +82,10 @@ class ClientsControllers{
                 }
             })
         }
+        await knex('emails')
+        .insert(emailsInsert)
+        .then(() => console.log('inserted with success'))
+        .catch(e => console.error(e))
         return response.status(200).json({message : "updated with success"})
     }
 
