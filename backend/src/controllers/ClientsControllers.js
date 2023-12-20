@@ -38,6 +38,69 @@ class ClientsControllers{
         return response.status(201).json(client_id)
     }
     
+    update = async (request, response) =>{
+        //as informacoes de emails e contatos deste cliente que está sendo atualizado
+        //virão do frontend quando a api de informacoes do cliente é consumida, 
+        //retornando tudo que tem sobre este todos os ids dos emails e contatos linkados
+        //e quando o cliente for ser atualizado, tera que selecionar e assim o seu id sera
+        //passado atraves da request.params.client_id
+        const {
+            newName, 
+            addictedEmails,// array of emails that will be insert to this client
+            addictedContacts,// array of contacts that will be insert to this client
+            arrayOfDeletedContacts, 
+            arrayOfDeletedEmails
+        } = request.body
+
+        const {client_id} = request.params
+
+        await knex('clients')
+        .where({client_id})
+        .update({name : newName})
+        .then(() => (console.log("updated")))
+        .catch(error => console.error(error))
+        if(arrayOfDeletedContacts.length > 0){
+            arrayOfDeletedContacts.map(async(element) => {
+                await knex('contacts')
+                .where({contact_id : element.contact_id})
+                .delete()
+            })
+        }
+        if(arrayOfDeletedEmails.length > 0){
+            arrayOfDeletedEmails.map(async(element) => {
+                await knex('emails')
+                .where({email_id : element.email_id})
+                .delete()
+            })
+        }
+
+        let contactsInsert = null
+        if(addictedContacts.length > 0){
+            contactsInsert = addictedContacts.map(contact => {
+                return {
+                    full_name : contact.full_name,
+                    owner_client_id : client_id
+                }
+            })
+        }
+
+        await knex('contacts')
+        .insert(contactsInsert)
+        .then(() => console.log('inserted with success'))
+        .catch(e => console.error(e))
+
+        let emailsInsert = null
+        if(addictedEmails.length > 0){
+            emailsInsert = addictedEmails.map(email => {
+                return {
+                    address : email.adress,
+                    FK_client_id : client_id
+                }
+            })
+        }
+        return response.status(200).json({message : "updated with success"})
+    }
+
     report = async (request, response) =>{
         const relatoryResponse = await knex("clients_contacts")
         .se
@@ -55,6 +118,8 @@ class ClientsControllers{
     }
 }
 module.exports = ClientsControllers
+
+
 
 class roullete{
     trigger = async() =>{
