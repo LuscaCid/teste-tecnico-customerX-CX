@@ -1,6 +1,27 @@
 const knex = require('../database/knex')
 const AppError = require('../utils/AppError')
 class ClientsControllers{
+
+    viewClientInfo = async (request, response) => {
+        const {client_id} = request.query
+        
+        const allInfo = await knex('clients')
+        .select('*')
+        .where({client_id})
+        .first()
+
+        const contacts = await knex('contacts')
+        .where({client_owner_id : allInfo.client_id})
+
+        const emails = await knex('emails')
+        .where({FK_client_id : allInfo.client_id}) 
+        const phones = await knex('phones')
+
+        .where({owner_id : allInfo.client_id})
+        return response.json({allInfo, emails, phones, contacts})
+
+    }
+
     create = async (request, response) => {
         //emails and phones are arrays from frontend
         const {full_name, emails, phones} = request.body
@@ -46,6 +67,7 @@ class ClientsControllers{
         //passado atraves da request.params.client_id
         const {
             newName, 
+            addictedPhones,
             addictedEmails,// array of emails that will be insert to this client
             arrayOfDeletedContacts, 
             arrayOfDeletedEmails
@@ -86,12 +108,30 @@ class ClientsControllers{
         .insert(emailsInsert)
         .then(() => console.log('inserted with success'))
         .catch(e => console.error(e))
+
+        let phonesInsert = null
+        if(addictedPhones.length > 0){
+            phonesInsert = addictedPhones.map(number => {
+                return {
+                    number : number,
+                    owner_id : client_id
+                }
+            })
+        }
+
+        await knex('phones').insert(phonesInsert).then((data) => console.log(data))
+
+
+        await knex('emails')
+        .insert(emailsInsert)
+        .then(() => console.log('inserted with success'))
+        .catch(e => console.error(e))
+
         return response.status(200).json({message : "updated with success"})
     }
 
     report = async (request, response) =>{
         const relatoryResponse = await knex("clients_contacts")
-        .se
         .then((data)=> {
             console.log('success')
             return data

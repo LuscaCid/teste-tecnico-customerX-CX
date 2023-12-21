@@ -9,5 +9,5 @@ clientsRoutes.use(EnsureAuth)
 
 clientsRoutes.post('/create', clientsControllers.create)
 clientsRoutes.get('/report', clientsControllers.report)
-
+clientsRoutes.get('/insideinfo', clientsControllers.viewClientInfo)
 module.exports = clientsRoutes
